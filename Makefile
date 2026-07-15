@@ -1,4 +1,4 @@
-COMPOSE=docker compose --env-file .env.docker -f docker-compose.local.yml
+COMPOSE=docker compose
 
 up:
 	$(COMPOSE) up -d

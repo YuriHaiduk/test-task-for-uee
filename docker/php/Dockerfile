@@ -26,3 +26,9 @@ RUN apk add --no-cache \
         zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["php-fpm"]

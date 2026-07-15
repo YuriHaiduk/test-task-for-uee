@@ -19,24 +19,20 @@ Endpoints:
 
 ## Getting Started
 
-Copy environment files:
-
 ```sh
-cp .env.docker.example .env.docker
-cp backend/.env.example backend/.env
+docker compose up -d
 ```
 
-Install dependencies, start the containers, and set up the app:
+That's it. On first boot the `php` container installs dependencies, creates
+`.env`, generates the app key, runs migrations, and seeds a few example
+companies — so no manual steps are needed. The first start takes a little longer
+while Composer installs; follow the progress with:
 
 ```sh
-docker compose -f docker-compose.local.yml --env-file .env.docker run --rm php composer install
-docker compose -f docker-compose.local.yml --env-file .env.docker up -d --build
-docker compose -f docker-compose.local.yml --env-file .env.docker exec -T php php artisan key:generate
-docker compose -f docker-compose.local.yml --env-file .env.docker exec -T php php artisan migrate --seed
+docker compose logs -f php
 ```
 
-`--seed` loads a few example companies (each with an initial version). The API
-is now available at http://localhost:8080.
+Once bootstrap finishes, the API is available at http://localhost:8080.
 
 ## Usage
 
