@@ -1,57 +1,23 @@
 # UEE Company Versioning API
 
-A small Laravel-based REST API for creating and updating company information with **data
-versioning**. Every change to a company's data is stored as a separate version, and the versioning
-mechanism is designed as a reusable module that can be attached to any future model or route.
+REST API for creating and updating companies with **data versioning**. Every
+change is stored as a separate version, and the versioning mechanism is a
+reusable module that can be attached to any future model.
 
-## API Overview
+Endpoints:
 
-### `POST /api/company`
-
-Accepts a JSON company object:
-
-```json
-{
-    "name": "ТОВ Українська енергетична біржа",
-    "edrpou": "37027819",
-    "address": "01001, Україна, м. Київ, вул. Хрещатик, 44"
-}
-```
-
-Behaviour:
-
-- Company with this `edrpou` does not exist → create it and record version 1 → `status: created`.
-- Company exists and at least one field changed → update it and store a new version →
-  `status: updated`.
-- Company exists and all fields match → nothing changes → `status: duplicate`.
-
-Example response:
-
-```json
-{
-    "status": "updated",
-    "company_id": 5,
-    "version": 3
-}
-```
-
-Possible `status` values: `created`, `updated`, `duplicate`.
+- `POST /api/company` — create or update a company. Returns `status`
+  (`created` / `updated` / `duplicate`), `company_id`, and `version`.
+- `GET /api/company/{edrpou}/versions` — full version history, newest first.
 
 ## Tech Stack
 
-- Laravel 12
-- PostgreSQL
+- Laravel 12 / PHP 8.4
+- PostgreSQL 16
 - Docker Compose
 - PHPUnit
 
-## Quick Start
-
-Clone the repository and open the project directory:
-
-```sh
-git clone <repository-url>
-cd test-task-for-uee
-```
+## Getting Started
 
 Copy environment files:
 
@@ -60,43 +26,19 @@ cp .env.docker.example .env.docker
 cp backend/.env.example backend/.env
 ```
 
-Install Composer dependencies using a temporary PHP container:
+Install dependencies, start the containers, and set up the app:
 
 ```sh
 docker compose -f docker-compose.local.yml --env-file .env.docker run --rm php composer install
-```
-
-Start containers:
-
-```sh
 docker compose -f docker-compose.local.yml --env-file .env.docker up -d --build
-```
-
-Check that all containers are running:
-
-```sh
-docker compose -f docker-compose.local.yml --env-file .env.docker ps
-```
-
-Generate application key:
-
-```sh
 docker compose -f docker-compose.local.yml --env-file .env.docker exec -T php php artisan key:generate
+docker compose -f docker-compose.local.yml --env-file .env.docker exec -T php php artisan migrate --seed
 ```
 
-Run migrations:
-
-```sh
-docker compose -f docker-compose.local.yml --env-file .env.docker exec -T php php artisan migrate
-```
+`--seed` loads a few example companies (each with an initial version). The API
+is now available at http://localhost:8080.
 
 ## Usage
-
-The API is available at:
-
-```text
-http://localhost:8080
-```
 
 Create or update a company:
 
@@ -111,10 +53,9 @@ curl -X POST http://localhost:8080/api/company \
   }'
 ```
 
-## Services
+Get the version history of a company (`37027819` is created by the seeder):
 
-- `nginx` — http://localhost:8080
-- `php` — PHP 8.4 FPM
-- `postgres` — PostgreSQL 16 on port 5432
-
-> Note: the Laravel application in `backend/` is installed in a later step.
+```sh
+curl http://localhost:8080/api/company/37027819/versions \
+  -H "Accept: application/json"
+```

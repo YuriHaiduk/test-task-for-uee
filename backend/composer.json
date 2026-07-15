@@ -24,6 +24,8 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "Modules\\Versioning\\": "modules/Versioning/",
+            "Modules\\Company\\": "modules/Company/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
