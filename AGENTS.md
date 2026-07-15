@@ -5,7 +5,7 @@ This repository contains a Docker-based Laravel 12 test task project.
 The goal of the project is to build a simple REST API for creating and updating company
 information with **data versioning**.
 
-The API must expose a route `POST /api/company` that accepts a JSON company object:
+The API exposes a route `POST /api/company` that accepts a JSON company object:
 
 ```json
 {
@@ -14,6 +14,9 @@ The API must expose a route `POST /api/company` that accepts a JSON company obje
     "address": "01001, Україна, м. Київ, вул. Хрещатик, 44"
 }
 ```
+
+A companion read route `GET /api/company/{edrpou}/versions` returns a company's version
+history (newest first).
 
 Processing rules:
 
@@ -25,11 +28,13 @@ Processing rules:
 The **key requirement** is a reusable versioning module that can work with any future models and
 routes, not only `/api/company`.
 
-The main Laravel application is located in the `backend` directory.
+The main Laravel application is located in the `backend` directory. It is organized as
+self-contained modules under `backend/modules/` — `Company` (route, controller, request,
+model) and `Versioning` (the reusable versioning module).
 
 Before changing application code, read and follow:
 
-`backend/AGENTS.md`
+`backend/CLAUDE.md`
 
 ## Important
 
@@ -43,11 +48,14 @@ Run all commands from the repository root.
 
 ## Project structure
 
-- `backend/` — Laravel 12 application (installed in a later step).
+- `backend/` — Laravel 12 application (module-based; see `backend/modules/`).
 - `docker/` — Docker configuration (php, nginx).
-- `docker-compose.local.yml` — local Docker Compose configuration.
-- `.env.docker` — Docker environment variables.
+- `docker-compose.yml` — local Docker Compose configuration. Services ship sane
+  `${VAR:-default}` defaults, so no separate env file is required to boot.
 - `Makefile` — owner-only helper commands. Do not use it.
+
+Tests live inside each module under `backend/modules/*/Tests/` (wired via `phpunit.xml`),
+not in `backend/tests/`.
 
 ## Services
 

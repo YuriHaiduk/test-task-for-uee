@@ -5,9 +5,7 @@
             "args": [
                 "compose",
                 "-f",
-                "docker-compose.local.yml",
-                "--env-file",
-                ".env.docker",
+                "docker-compose.yml",
                 "exec",
                 "-T",
                 "php",

@@ -7,7 +7,6 @@ Thumbs.db
 # Docker environment
 .env
 .env.*
-!.env.docker.example
 !backend/.env.example
 
 /.codex
